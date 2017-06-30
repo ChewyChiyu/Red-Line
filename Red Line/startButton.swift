@@ -16,6 +16,8 @@ enum ButtonStates{
 
 class startButton : SKSpriteNode {
     
+    var alreadyPressed: Bool =  false
+    
     var buttonState : ButtonStates = .sleep{
         didSet{
             if(buttonState == ButtonStates.sleep){
@@ -40,7 +42,10 @@ class startButton : SKSpriteNode {
     }
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         buttonState = .sleep
-        playAction()
+        if(!alreadyPressed){
+            playAction()
+            alreadyPressed = true
+        }
     }
     var playAction: () -> Void = {}
     

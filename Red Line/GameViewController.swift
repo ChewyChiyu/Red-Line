@@ -26,7 +26,8 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
     
     //reset bools
     var reseting: Bool = false
-    
+    var launchedGameBefore: Bool = false
+    var canJump: Bool = true
     
     //master player
     var cube : SCNNode!
@@ -59,17 +60,24 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
                 let menu = startMenu?.childNode(withName: "Menu") as? SKSpriteNode
                 let startButton = menu?.childNode(withName: "startButton") as? startButton
                 
+                //hide blocker if first launching game
+                let blocker = startMenu?.childNode(withName: "placeHolder") as? SKSpriteNode
+                
+                if(launchedGameBefore){
+                    blocker?.removeFromParent()
+                }
+                //setting single time bool flag to true
+                launchedGameBefore = true
                 menu?.alpha = 0
                 //menu fade in animation
                 menu?.run(SKAction.fadeAlpha(by: 1, duration: 1))
                 
-                
                 startButton?.playAction = {
                     //removing menu HUD
-                    print("hello")
                     
                     menu?.run(SKAction.move(by: CGVector(dx: 500, dy : 0), duration: 1)) //move off screen
-                    
+                    blocker?.run(SKAction.move(by: CGVector(dx: 500, dy : 0), duration: 1)) //move off screen
+
                     //shift camera towards cube
                     self.gameCamera.runAction( SCNAction.moveBy(x: 0, y: 0, z: CGFloat(self.cube.position.z) - 2, duration: 1), completionHandler: {
                         //remove HUD after shift
@@ -79,13 +87,6 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
                         self.gameState = .inGame
                     })
                 }
-                
-                
-                //TODO: laksjdfal
-                
-                //MARK: SWITCH CASE
-                
-                
                 
                 
                 
@@ -176,7 +177,7 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
                 let restartButton = restart?.childNode(withName: "restartButton") as? startButton
                 let exitButton = restart?.childNode(withName: "exitButton") as? startButton
                 //restart menu animation
-                restart?.run(SKAction.moveBy(x: 500, y: 0, duration: 1))
+                restart?.run(SKAction.moveBy(x: 500, y: 0, duration: 0.5))
                 
                 
                 //restart trigger
@@ -184,7 +185,7 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
                     //begin reset process
                     
                     //moving resetmenu off screen
-                    restart?.run(SKAction.moveBy(x: 500, y: 0, duration: 1), completion: {
+                    restart?.run(SKAction.moveBy(x: 500, y: 0, duration: 0.5), completion: {
                         self.gameView.overlaySKScene = nil
                     })
                     
@@ -243,7 +244,7 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
                         }
                     }
                     self.cube.runAction(SCNAction.move(to: SCNVector3(0,1,-1)
-                        , duration: 0.01), completionHandler: {
+                        , duration: 0.3), completionHandler: {
                             //apply physics to new nodes
                             self.applyPhysics()
                             //moving game state back to starting position in Game
@@ -277,6 +278,7 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
                 child.physicsBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width: 1, height: 1, length: 15, chamferRadius: 0)))
                 child.physicsBody?.isAffectedByGravity = false
                 child.physicsBody?.restitution = 0
+                child.physicsBody?.contactTestBitMask = 1
             }else if(child.name == "goal"){
                 child.physicsBody = SCNPhysicsBody(type: .static, shape: SCNPhysicsShape(geometry: SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0)))
                 child.physicsBody?.isAffectedByGravity = false
@@ -357,6 +359,9 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
         let contactA = contact.nodeA
         let contactB = contact.nodeB
+    
+        //turn jump back on
+        canJump = true
         
         //contact between floor and the cube
         if(contactA.name == "floor" && contactB.name == "box" || contactB.name == "floor" && contactA.name == "box" ){
@@ -369,13 +374,16 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
             reseting = true
             gameState = .inTransit
         }
+        
+      
+        
     }
     
-    
-    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if(gameState == .inGame){
+        //only one jump, no jumping in mid air
+        if(gameState == .inGame && canJump){
             cube.physicsBody?.applyForce(SCNVector3(0,2,0), asImpulse: true)
+            canJump = false
         }
     }
     override var shouldAutorotate: Bool {
