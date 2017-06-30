@@ -17,6 +17,10 @@
 		2009C1EE1F0610C000417406 /* Red_LineUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2009C1ED1F0610C000417406 /* Red_LineUITests.swift */; };
 		201F9B051F06140900D4A896 /* MasterScene.scn in Resources */ = {isa = PBXBuildFile; fileRef = 201F9B041F06140900D4A896 /* MasterScene.scn */; };
 		201F9B071F06316800D4A896 /* MapFormationA.scn in Resources */ = {isa = PBXBuildFile; fileRef = 201F9B061F06316800D4A896 /* MapFormationA.scn */; };
+		206F6BC21F06AF7100C28657 /* MapFormationB.scn in Resources */ = {isa = PBXBuildFile; fileRef = 206F6BC11F06AF7100C28657 /* MapFormationB.scn */; };
+		206F6BC41F06B75200C28657 /* StartMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 206F6BC31F06B75200C28657 /* StartMenu.sks */; };
+		206F6BC61F06B9B400C28657 /* startButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206F6BC51F06B9B400C28657 /* startButton.swift */; };
+		206F6BC81F06C68200C28657 /* RestartMenu.sks in Resources */ = {isa = PBXBuildFile; fileRef = 206F6BC71F06C68200C28657 /* RestartMenu.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +57,10 @@
 		2009C1EF1F0610C000417406 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		201F9B041F06140900D4A896 /* MasterScene.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = MasterScene.scn; sourceTree = "<group>"; };
 		201F9B061F06316800D4A896 /* MapFormationA.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = MapFormationA.scn; sourceTree = "<group>"; };
+		206F6BC11F06AF7100C28657 /* MapFormationB.scn */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = MapFormationB.scn; sourceTree = "<group>"; };
+		206F6BC31F06B75200C28657 /* StartMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = StartMenu.sks; sourceTree = "<group>"; };
+		206F6BC51F06B9B400C28657 /* startButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = startButton.swift; sourceTree = "<group>"; };
+		206F6BC71F06C68200C28657 /* RestartMenu.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = RestartMenu.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,8 +114,12 @@
 				2009C1CB1F0610C000417406 /* AppDelegate.swift */,
 				2009C1CD1F0610C000417406 /* art.scnassets */,
 				2009C1CF1F0610C000417406 /* GameViewController.swift */,
+				206F6BC51F06B9B400C28657 /* startButton.swift */,
+				206F6BC71F06C68200C28657 /* RestartMenu.sks */,
+				206F6BC31F06B75200C28657 /* StartMenu.sks */,
 				201F9B041F06140900D4A896 /* MasterScene.scn */,
 				201F9B061F06316800D4A896 /* MapFormationA.scn */,
+				206F6BC11F06AF7100C28657 /* MapFormationB.scn */,
 				2009C1D11F0610C000417406 /* Main.storyboard */,
 				2009C1D41F0610C000417406 /* Assets.xcassets */,
 				2009C1D61F0610C000417406 /* LaunchScreen.storyboard */,
@@ -249,7 +261,10 @@
 				2009C1D51F0610C000417406 /* Assets.xcassets in Resources */,
 				2009C1D31F0610C000417406 /* Main.storyboard in Resources */,
 				201F9B051F06140900D4A896 /* MasterScene.scn in Resources */,
+				206F6BC81F06C68200C28657 /* RestartMenu.sks in Resources */,
+				206F6BC21F06AF7100C28657 /* MapFormationB.scn in Resources */,
 				201F9B071F06316800D4A896 /* MapFormationA.scn in Resources */,
+				206F6BC41F06B75200C28657 /* StartMenu.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +290,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2009C1D01F0610C000417406 /* GameViewController.swift in Sources */,
+				206F6BC61F06B9B400C28657 /* startButton.swift in Sources */,
 				2009C1CC1F0610C000417406 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

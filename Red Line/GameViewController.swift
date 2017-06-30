@@ -9,6 +9,7 @@
 import UIKit
 import QuartzCore
 import SceneKit
+import SpriteKit
 import CoreMotion
 
 enum gameState{
@@ -41,20 +42,58 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
         didSet{
             switch(gameState){
             case .inStart:
-                //gonna put start menu here
-                
-                
-                
-                
                 
                 //applying physics Body to red lines
                 applyPhysics()
+                
+                //move back camera for motion effect
+                self.gameCamera.position.z += 4 // move back camera
+
+                
+                //put start menu here
+                //menu is spritekit scene overlaying a scene kit
+                let startMenu = SKScene(fileNamed: "StartMenu.sks")
+                //applying startMenu onto game scene
+                gameView.overlaySKScene = startMenu
+                
+                
+                //menu HUD
+                let menu = startMenu?.childNode(withName: "Menu") as? SKSpriteNode
+                let startButton = menu?.childNode(withName: "startButton") as? startButton
+                
+                
+                startButton?.playAction = {
+                    //removing menu HUD 
+                    print("hello")
+
+                    menu?.run(SKAction.move(by: CGVector(dx: 500, dy : 0), duration: 1)) //move off screen
+                    
+                    //shift camera towards cube
+                    self.gameCamera.runAction( SCNAction.moveBy(x: 0, y: 0, z: CGFloat(self.cube.position.z) - 2, duration: 1), completionHandler: {
+                        //remove HUD after shift
+                        self.gameView.overlaySKScene = nil
+                        //boost cube
+                        self.cube.physicsBody?.applyForce(SCNVector3(0,0,-1), asImpulse: true)
+                        self.gameState = .inGame
+                    })
+                }
+                
+               
+                //TODO: laksjdfal
+                
+                //MARK: SWITCH CASE
+                
+                
+                
+                
                 
                 
                 
                 break
             case .inGame:
                 //removing start menu here
+                
+
                 
                 //nilling friction once again
                 cube.physicsBody?.friction = 0
@@ -76,18 +115,32 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
                 }
                 
                 //hyper jump for load animation
-                cube.runAction(SCNAction.moveBy(x: 0, y: 30, z: 0, duration: 1), completionHandler: {
+                cube.runAction(SCNAction.moveBy(x: 0, y: 60, z: 0, duration: 1), completionHandler: {
                     //loading in new map after jump animation
-                    //right now only MapFormationA is avaiable
+                  
                     
                     //loading in objects from selected new formation
-                    let newScene = SCNScene(named: "MapFormationA.scn")
-                    for newChild in (newScene?.rootNode.childNodes)!{
+                    
+                    
+                    //switch arc random for "random" map generation
+                    var newScene = SCNScene()
+                    switch(Int(arc4random_uniform(2))){
+                    case 0:
+                        newScene = SCNScene(named: "MapFormationA.scn")!
+                        break
+                        
+                    case 1:
+                        newScene = SCNScene(named: "MapFormationB.scn")!
+                        break
+                    default:
+                        break
+                    }
+                    for newChild in (newScene.rootNode.childNodes){
                         if(newChild.name == "redLine" || newChild.name == "goal"){
                             self.gameScene.rootNode.addChildNode(newChild)
                         }
                     }
-
+                    
                     
                     //setting state back to game
                     self.gameState = .inGame
@@ -104,31 +157,74 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
                 break
             case .inDeath:
                 //load in death animation and prompt
-                //removing all sprites from scene
-                for child in gameScene.rootNode.childNodes{
-                    if(child.name == "redLine" || child.name == "goal"){
-                        child.removeFromParentNode()
-
-                    }
-                }
-                //adding from a master scene
-                let newScene = SCNScene(named: "MasterScene.scn")
-                for newChild in (newScene?.rootNode.childNodes)!{
-                    if(newChild.name == "redLine" || newChild.name == "goal"){
-                        gameScene.rootNode.addChildNode(newChild)
-                    }
-                }
                 
-                applyPhysics()
-                
-                
-                self.gameState = .inStart
-                
-                //setting cube back to start with fall down animation
-                self.cube.position = SCNVector3(0,2,-1)
                 
                 //setting friction to max to stop all previous motion
-                cube.physicsBody?.friction = 1000
+                self.cube.physicsBody?.friction = 1000
+                
+                
+                //restartmenu is spritekit scene overlaying a scene kit
+                let restartMenu = SKScene(fileNamed: "RestartMenu.sks")
+                //applying startMenu onto game scene
+                gameView.overlaySKScene = restartMenu
+
+                
+                //Restart HUD items
+                let restart = restartMenu?.childNode(withName: "restartMenu") as? SKSpriteNode
+                let restartButton = restart?.childNode(withName: "restartButton") as? startButton
+                
+                //restart menu animation
+                restart?.run(SKAction.moveBy(x: 500, y: 0, duration: 1))
+                
+                
+                //restart trigger
+                restartButton?.playAction = {
+                    //begin reset process
+                    
+                    //moving resetmenu off screen
+                    restart?.run(SKAction.moveBy(x: 500, y: 0, duration: 1), completion: {
+                        self.gameView.overlaySKScene = nil
+                    })
+                    
+                    
+                    //removing all sprites from scene
+                    for child in self.gameScene.rootNode.childNodes{
+                        if(child.name == "redLine" || child.name == "goal"){
+                            child.removeFromParentNode()
+                            
+                        }
+                    }
+                    //adding from a master scene
+                    let newScene = SCNScene(named: "MasterScene.scn")
+                    for newChild in (newScene?.rootNode.childNodes)!{
+                        if(newChild.name == "redLine" || newChild.name == "goal"){
+                            self.gameScene.rootNode.addChildNode(newChild)
+                        }
+                    }
+                    
+                    
+                    
+                    
+                    //setting cube back to start with move to animation
+                    
+                    self.cube.runAction(SCNAction.move(to: SCNVector3(0,1,-1)
+                        , duration: 2), completionHandler: {
+                            //apply physics to new nodes
+                            self.applyPhysics()
+                            //moving game state back to starting position in Game
+                            self.cube.physicsBody?.friction = 0
+                            //launch!
+                            self.cube.physicsBody?.applyForce(SCNVector3(0,0,-1), asImpulse: true)
+                            self.gameState = .inGame //setting gamestate back to game
+
+                            
+                    })
+                    
+
+                }
+                
+                
+                
                 
                 
                 break
@@ -162,7 +258,6 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
         //accel moves if inGame and cube is moving already
         if(gameState == .inGame){
             if let data = motionManager.accelerometerData {
-                //cube.physicsBody?.velocity.x = Float(data.acceleration.x)
                 cube.physicsBody?.applyForce(SCNVector3((data.acceleration.x*0.1),0,0), asImpulse: true)
             }
         }
@@ -245,12 +340,7 @@ class GameViewController: UIViewController , SCNPhysicsContactDelegate{
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        //tap to begin the game
-        if(gameState == .inStart){
-            gameState = .inGame
-            cube.physicsBody?.applyForce(SCNVector3(0,0,-1), asImpulse: true)
-        }
-        else if(gameState == .inGame){
+        if(gameState == .inGame){
             cube.physicsBody?.applyForce(SCNVector3(0,2,0), asImpulse: true)
         }
     }
